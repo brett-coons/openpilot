@@ -50,7 +50,7 @@ class DRIVER_MONITOR_SETTINGS:
     self._EYE_THRESHOLD = 0.65
     self._SG_THRESHOLD = 0.9
     self._BLINK_THRESHOLD = 0.865
-    self._PHONE_THRESH = 0.5
+    self._PHONE_THRESH = 1.0
     self._SLEEP_THRESH = 0.75
     self._POSE_PITCH_THRESHOLD = 0.3133
     self._POSE_PITCH_THRESHOLD_SLACK = 0.3237
@@ -312,24 +312,25 @@ class DriverMonitoring:
       self.hi_stds = 0
 
   def _update_events(self, driver_engaged, op_engaged, lowspeed, wrong_gear):
-    self.alert_level = AlertLevel.none
-    self.driver_interacting = driver_engaged
+    return
+    # self.alert_level = AlertLevel.none
+    # self.driver_interacting = driver_engaged
 
-    if self.alert_3_cnt >= self.settings._MAX_ALERT_3 or self.no_response_cnt >= self.settings._MAX_NO_RESPONSE:
-      if not self.lockout_active:
-        self.lockout_count += 1
-        self.lockout_duration = self.settings._LOCKOUT_TIMES[min(self.lockout_count - 1, len(self.settings._LOCKOUT_TIMES) - 1)]
-        Params().put("DriverLockoutCount", self.lockout_count)
-      self.lockout_active = True
+    # if self.alert_3_cnt >= self.settings._MAX_ALERT_3 or self.no_response_cnt >= self.settings._MAX_NO_RESPONSE:
+    #   if not self.lockout_active:
+    #     self.lockout_count += 1
+    #     self.lockout_duration = self.settings._LOCKOUT_TIMES[min(self.lockout_count - 1, len(self.settings._LOCKOUT_TIMES) - 1)]
+    #     Params().put("DriverLockoutCount", self.lockout_count)
+    #   self.lockout_active = True
 
-    if self.lockout_active:
-      self.lockout_time_elapsed += 1
-      if self.lockout_time_elapsed > self.lockout_duration:
-        self.lockout_active = False
-        self.alert_3_cnt = 0
-        self.cnt_since_alert_3 = 0
-        self.no_response_cnt = 0
-        self.lockout_time_elapsed = 0
+    # if self.lockout_active:
+    #   self.lockout_time_elapsed += 1
+    #   if self.lockout_time_elapsed > self.lockout_duration:
+    #     self.lockout_active = False
+    #     self.alert_3_cnt = 0
+    #     self.cnt_since_alert_3 = 0
+    #     self.no_response_cnt = 0
+    #     self.lockout_time_elapsed = 0
 
     always_on_valid = self.always_on and not wrong_gear
     if (self.driver_interacting and self.awareness > 0 and self.active_policy == MonitoringPolicy.wheeltouch) or \
